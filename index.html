@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat online</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="jquery.js"></script>
+</head>
+
+<body>
+
+    <header>
+        <form action="">
+            <input type="text" id="msg" autofocus autocomplete="off">
+            <button type="submit">Enviar</button>
+        </form>
+    </header>
+
+    <ul id="mensagens">
+
+    </ul>
+    <div id="Status"></div>
+
+    <script>
+        $(() => {
+            const socket = io()
+            socket.nickName = ''
+
+            if (socket.nickName === '') {
+                $("#msg").attr('placeholder', 'Digite seu nome');
+
+            } else {
+                $("#msg").attr('placeholder', 'Digite sua mensagem');
+
+
+
+
+
+
+
+            }
+
+
+            $("form").submit((event) => {
+                if (socket.nickName === '') {
+                    socket.nickName = $("#msg").val()
+                    socket.emit('login', $("#msg").val(), name)
+                } else {
+                    socket.emit('chat msg', $("#msg").val(), name)
+
+
+
+                }
+                $("#msg").val('')
+                return false
+            })
+
+
+
+
+
+            socket.on('chat msg', (msg, name) => {
+                if (name == undefined) {
+                    name = 'Servidor'
+                }
+                const msg_li = `<li>${name} - ${msg} </li>`;
+                $("#mensagens").append(msg_li)
+
+            })
+
+
+            $("#msg").keypress((evnt) => {
+                socket.emit('Digitando', `O usuario ${socket.nickName} Está digitando...`)
+
+            })
+            socket.on('Digitando', (msg_status) => {
+                $("#Status").html(msg_status)
+                console.log(msg_status)
+            })
+
+
+            $("#msg").keyup((evnt) => {
+                socket.emit('Digitando', '')
+            })
+
+        })
+
+    </script>
+</body>
+
+</html>
